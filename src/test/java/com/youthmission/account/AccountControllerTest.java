@@ -46,6 +46,40 @@ class AccountControllerTest {
                 .andExpect(model().attributeExists("signUpForm"));
     }
 
+    @DisplayName("인증 메일 확인 - 입력값 오류")
+    @Test
+    void checkEmailToken_with_wrong_input() throws Exception {
+        mockMvc.perform(get("/check-email-token")
+                .param("token", "sdfjslwfwef")
+                .param("email", "email@email.com"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("error"))
+                .andExpect(view().name("account/checked-email"))
+                .andExpect(unauthenticated());
+    }
+
+    @DisplayName("인증 메일 확인 - 입력값 정상")
+    @Test
+    void checkEmailToken() throws Exception {
+        Account account = Account.builder()
+                .email("test@email.com")
+                .password("12345678")
+                .name("호석")
+                .build();
+        Account newAccount = accountRepository.save(account);
+        newAccount.generateEmailCheckToken();
+
+        mockMvc.perform(get("/check-email-token")
+                .param("token", newAccount.getEmailCheckToken())
+                .param("email", newAccount.getEmail()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeDoesNotExist("error"))
+                .andExpect(model().attributeExists("name"))
+                .andExpect(model().attributeExists("numberOfUser"))
+                .andExpect(view().name("account/checked-email"))
+                .andExpect(authenticated().withUsername("test@email.com"));
+    }
+
     @DisplayName("회원 가입 처리 - 입력값 오류")
     @Test
     void signUpSubmit_with_wrong_input() throws Exception {
@@ -78,39 +112,4 @@ class AccountControllerTest {
         assertNotNull(account.getEmailCheckToken());
         then(javaMailSender).should().send(any(SimpleMailMessage.class));
     }
-
-    @DisplayName("인증 메일 확인 - 입력값 오류")
-    @Test
-    void checkEmailToken_with_wrong_input() throws Exception {
-        mockMvc.perform(get("/check-email-token")
-                .param("token", "sdfjslwfwef")
-                .param("email", "email@email.com"))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("error"))
-                .andExpect(view().name("account/checked-email"))
-                .andExpect(unauthenticated());
-    }
-
-    @DisplayName("인증 메일 확인 - 입력값 정상")
-    @Test
-    void checkEmailToken() throws Exception {
-        Account account = Account.builder()
-                .email("test@email.com")
-                .password("12345678")
-                .name("호석")
-                .build();
-        Account newAccount = accountRepository.save(account);
-        newAccount.generateEmailCheckToken();
-
-        mockMvc.perform(get("/check-email-token")
-                .param("token", newAccount.getEmailCheckToken())
-                .param("email", newAccount.getEmail()))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("error"))
-                .andExpect(model().attributeExists("name"))
-                .andExpect(model().attributeExists("numberOfUser"))
-                .andExpect(view().name("account/checked-email"))
-                .andExpect(authenticated().withUsername("호석"));
-    }
-
 }

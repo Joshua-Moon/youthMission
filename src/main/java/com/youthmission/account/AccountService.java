@@ -1,8 +1,10 @@
 package com.youthmission.account;
 
 import com.youthmission.domain.Account;
+import com.youthmission.settings.Notifications;
 import com.youthmission.settings.Profile;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +28,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public Account processNewAccount(SignUpForm signUpForm){
@@ -41,6 +44,7 @@ public class AccountService implements UserDetailsService {
                 .name(signUpForm.getName())
                 .church(signUpForm.getChurch())
                 .password(passwordEncoder.encode(signUpForm.getPassword()))
+                .umionCreatedByWeb(true)
                 .umionEnrollmentResultByWeb(true)
                 .umionUpdatedByWeb(true)
                 .build();
@@ -81,17 +85,17 @@ public class AccountService implements UserDetailsService {
     }
 
     public void updateProfile(Account account, Profile profile) {
-        account.setBio(profile.getBio());
-        account.setUrl(profile.getUrl());
-        account.setChurch(profile.getChurch());
-        account.setOccupation(profile.getOccupation());
-        account.setPhoneNumber(profile.getPhoneNumber());
-        account.setProfileImage(profile.getProfileImage());
+        modelMapper.map(profile, account);
         accountRepository.save(account);
     }
 
     public void updatePassword(Account account, String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
+
+    public void updateNotifications(Account account, Notifications notifications) {
+        modelMapper.map(notifications, account);
         accountRepository.save(account);
     }
 }

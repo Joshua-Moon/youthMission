@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.Pattern;
 
 @Data
-@NoArgsConstructor
 public class Profile {
 
     @Length(max = 35)
@@ -28,13 +27,4 @@ public class Profile {
     private String phoneNumber;
 
     private String profileImage;
-
-    public Profile(Account account){
-        this.bio = account.getBio();
-        this.url = account.getUrl();
-        this.church = account.getChurch();
-        this.occupation = account.getOccupation();
-        this.phoneNumber = account.getPhoneNumber();
-        this.profileImage = account.getProfileImage();
-    }
 }

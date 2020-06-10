@@ -45,15 +45,15 @@ public class Account {
     private String profileImage;//이미지는 varchar(255)보다 크기때문에 @Lob 표시
 
     //이하 알림설정
-    private boolean umionCreatedByEmail;//스터디모임 생성되면 이메일로 알림을 받을 것인가?
+    private boolean umionCreatedByEmail;//유미온 생성되면 이메일로 알림을 받을 것인가?
 
     private boolean umionCreatedByWeb;
 
-    private boolean umionEnrollmentResultByEmail;//스터디모임 가입 결과를 이메일로 받을 것인가?
+    private boolean umionEnrollmentResultByEmail;//유미온 가입 결과를 이메일로 받을 것인가?
 
     private boolean umionEnrollmentResultByWeb;
 
-    private boolean umionUpdatedByEmail; //스터디모임 내용 변경을 이메일로 받을 것인가?
+    private boolean umionUpdatedByEmail; //유미온 내용 변경을 이메일로 받을 것인가?
 
     private boolean umionUpdatedByWeb;
 

@@ -1,4 +1,4 @@
-package com.youthmission.settings;
+package com.youthmission.settings.form;
 
 import com.youthmission.domain.Account;
 import lombok.Data;

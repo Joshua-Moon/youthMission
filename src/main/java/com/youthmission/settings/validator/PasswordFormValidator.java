@@ -1,5 +1,6 @@
-package com.youthmission.settings;
+package com.youthmission.settings.validator;
 
+import com.youthmission.settings.form.PasswordForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

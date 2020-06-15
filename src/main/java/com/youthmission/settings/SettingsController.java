@@ -1,8 +1,13 @@
 package com.youthmission.settings;
 
+import com.sun.xml.bind.v2.TODO;
 import com.youthmission.account.AccountService;
 import com.youthmission.account.CurrentUser;
 import com.youthmission.domain.Account;
+import com.youthmission.settings.form.Notifications;
+import com.youthmission.settings.form.PasswordForm;
+import com.youthmission.settings.form.Profile;
+import com.youthmission.settings.validator.PasswordFormValidator;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -12,7 +17,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -27,13 +31,16 @@ public class SettingsController {
     }
 
     static final String SETTINGS_PROFILE_VIEW_NAME = "settings/profile";
-    static final String SETTINGS_PROFILE_URL = "/settings/profile";
+    static final String SETTINGS_PROFILE_URL = "/" + SETTINGS_PROFILE_VIEW_NAME;
 
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
-    static final String SETTINGS_PASSWORD_URL = "/settings/password";
+    static final String SETTINGS_PASSWORD_URL = "/" + SETTINGS_PASSWORD_VIEW_NAME;
 
     static final String SETTINGS_NOTIFICATIONS_VIEW_NAME = "settings/notifications";
-    static final String SETTINGS_NOTIFICATIONS_URL = "/settings/notifications";
+    static final String SETTINGS_NOTIFICATIONS_URL = "/" + SETTINGS_NOTIFICATIONS_VIEW_NAME;
+
+    static final String SETTINGS_ACCOUNT_VIEW_NAME = "settings/account";
+    static final String SETTINGS_ACCOUNT_URL = "/" + SETTINGS_ACCOUNT_VIEW_NAME;
 
     private final AccountService accountService;
     private final ModelMapper modelMapper;
@@ -97,4 +104,25 @@ public class SettingsController {
         attributes.addFlashAttribute("message","알림 설정을 변경했습니다");
         return "redirect:" + SETTINGS_NOTIFICATIONS_URL;
     }
+
+    @GetMapping(SETTINGS_ACCOUNT_URL)
+    public String updateAccountForm(@CurrentUser Account account, Model model) {
+        model.addAttribute(account);
+//        model.addAttribute(modelMapper.map(account, Notifications.class)); //유미온은 닉네임 변경 필요 없
+        //TODO 계정 삭제 추가
+        return SETTINGS_ACCOUNT_VIEW_NAME;
+    }
+
+//    @PostMapping(SETTINGS_ACCOUNT_URL)
+//    public String updateAccount(@CurrentUser Account account, @Valid NicknameForm nicknameForm, Errors errors,
+//                                Model model, RedirectAttributes attributes) {
+//        if (errors.hasErrors()) {
+//            model.addAttribute(account);
+//            return SETTINGS_ACCOUNT_VIEW_NAME;
+//        }
+//
+//        accountService.updateNickname(account, nicknameForm.getNickname());
+//        attributes.addFlashAttribute("message", "닉네임을 수정했습니다.");
+//        return "redirect:" + SETTINGS_ACCOUNT_URL;
+//    }
 }

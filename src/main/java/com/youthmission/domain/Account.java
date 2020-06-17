@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -56,6 +57,9 @@ public class Account {
     private boolean umionUpdatedByEmail; //유미온 내용 변경을 이메일로 받을 것인가?
 
     private boolean umionUpdatedByWeb;
+
+    @ManyToMany
+    private Set<Tag> tags;
 
 
     public void generateEmailCheckToken() {

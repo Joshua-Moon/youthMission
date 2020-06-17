@@ -2,6 +2,7 @@ package com.youthmission.account;
 
 import com.youthmission.domain.Account;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AccountController {

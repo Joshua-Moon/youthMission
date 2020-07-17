@@ -1,5 +1,6 @@
 package com.youthmission.account;
 
+import com.youthmission.config.AppProperties;
 import com.youthmission.domain.Account;
 import com.youthmission.mail.EmailMessage;
 import com.youthmission.mail.EmailService;
@@ -18,6 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -31,6 +34,10 @@ public class AccountService implements UserDetailsService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    // 템플릿 엔진으로 HTML 본문채워 넣기
+    private final TemplateEngine templateEngine;
+    // local, dev, 운영 호스트 다 다르게 주기 위함
+    private final AppProperties appProperties;
 
     @Transactional
     public Account processNewAccount(SignUpForm signUpForm){
@@ -54,11 +61,27 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendSignUpConfirmEmail(Account newAccount) {
-        EmailMessage emailMessage  = EmailMessage.builder()
+/*        EmailMessage emailMessage  = EmailMessage.builder()
                 .to(newAccount.getEmail())
                 .subject("유미온, 회원 가입 인증")
                 .message("/check-email-token?token=" + newAccount.getEmailCheckToken() + "&email="
                         + newAccount.getEmail())
+                .build();
+
+        emailService.sendEmail(emailMessage);*/
+        Context context = new Context();
+        context.setVariable("link", "/check-email-token?token=" + newAccount.getEmailCheckToken()
+                + "&email=" + newAccount.getEmail());
+        context.setVariable("name", newAccount.getName());
+        context.setVariable("linkName", "이메일 인증하기");
+        context.setVariable("message", "유미온 서비스를 사용하려면 링크를 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
+        String message = templateEngine.process("mail/simple-link", context);
+
+        EmailMessage emailMessage = EmailMessage.builder()
+                .to(newAccount.getEmail())
+                .subject("유미온, 회원 가입 인증")
+                .message(message)
                 .build();
 
         emailService.sendEmail(emailMessage);
@@ -104,13 +127,29 @@ public class AccountService implements UserDetailsService {
     }
 
     public void sendLoginLink(Account account) {
+        Context context = new Context();
+        context.setVariable("link", "/login-by-email?token=" + account.getEmailCheckToken() +
+                "&email=" + account.getEmail());
+        context.setVariable("nickname", account.getName());
+        context.setVariable("linkName", "유미온 로그인하기");
+        context.setVariable("message", "로그인 하려면 아래 링크를 클릭하세요.");
+        context.setVariable("host", appProperties.getHost());
+        String message = templateEngine.process("mail/simple-link", context);
+
         EmailMessage emailMessage = EmailMessage.builder()
                 .to(account.getEmail())
                 .subject("유미온, 로그인 링크")
-                .message("/login-by-email?token=" + account.getEmailCheckToken() +
-                        "&email=" + account.getEmail())
+                .message(message)
                 .build();
         emailService.sendEmail(emailMessage);
 
+    }
+
+    public Account getAccount(String email) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new IllegalArgumentException(email + "에 해당하는 사용자가 없습니다.");
+        }
+        return account;
     }
 }

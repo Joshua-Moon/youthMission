@@ -3,8 +3,6 @@ package com.youthmission.account;
 import com.youthmission.domain.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
@@ -69,13 +66,13 @@ public class AccountController {
     }
 
     @GetMapping("/check-email")
-    public String checkEmail(@CurrentUser Account account, Model model) {
+    public String checkEmail(@CurrentAccount Account account, Model model) {
         model.addAttribute("email", account.getEmail());
         return "account/check-email";
     }
 
     @GetMapping("/resend-confirm-email")
-    public String resendConfirmEmail(@CurrentUser Account account, Model model) {
+    public String resendConfirmEmail(@CurrentAccount Account account, Model model) {
         if (!account.canSendConfirmEmail()) {
             model.addAttribute("error", "인증 이메일은 1시간에 한번만 전송할 수 있습니다.");
             model.addAttribute("email", account.getEmail());
@@ -87,14 +84,10 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{email}")
-    public String viewProfile(@PathVariable String email, Model model, @CurrentUser Account account) {
-        Account byEmail = accountRepository.findByEmail(email);
-        if (email == null) {
-            throw new IllegalArgumentException(email + "에 해당하는 사용자가 없습니다.");
-        }
-
-        model.addAttribute(byEmail);
-        model.addAttribute("isOwner", byEmail.equals(account));
+    public String viewProfile(@PathVariable String email, Model model, @CurrentAccount Account account) {
+        Account accountToView = accountService.getAccount(email);
+        model.addAttribute(accountToView);
+        model.addAttribute("isOwner", accountToView.equals(account));
         return "account/profile";
     }
 

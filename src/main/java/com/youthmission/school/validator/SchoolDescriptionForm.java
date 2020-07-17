@@ -1,6 +1,5 @@
-package com.studyolle.study.form;
+package com.youthmission.school.validator;
 
-import com.studyolle.domain.Study;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -9,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor
-public class StudyDescriptionForm {
+public class SchoolDescriptionForm {
 
     @NotBlank
     @Length(max = 100)

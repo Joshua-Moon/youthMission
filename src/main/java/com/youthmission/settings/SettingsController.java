@@ -1,8 +1,7 @@
 package com.youthmission.settings;
 
-import com.sun.xml.bind.v2.TODO;
 import com.youthmission.account.AccountService;
-import com.youthmission.account.CurrentUser;
+import com.youthmission.account.CurrentAccount;
 import com.youthmission.domain.Account;
 import com.youthmission.settings.form.Notifications;
 import com.youthmission.settings.form.PasswordForm;
@@ -46,14 +45,14 @@ public class SettingsController {
     private final ModelMapper modelMapper;
 
     @GetMapping(SETTINGS_PROFILE_URL)
-    public String profileUpdateForm(@CurrentUser Account account, Model model){
+    public String profileUpdateForm(@CurrentAccount Account account, Model model){
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Profile.class));
         return SETTINGS_PROFILE_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_PROFILE_URL)
-    public String updateProfile(@CurrentUser Account account, @Valid Profile profile, Errors errors, Model model,
+    public String updateProfile(@CurrentAccount Account account, @Valid Profile profile, Errors errors, Model model,
                                 RedirectAttributes redirectAttributes){
         if(errors.hasErrors()) {
             model.addAttribute(account);
@@ -66,14 +65,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_PASSWORD_URL)
-    public String updatePasswordForm(@CurrentUser Account account, Model model){
+    public String updatePasswordForm(@CurrentAccount Account account, Model model){
         model.addAttribute(account);
         model.addAttribute(new PasswordForm());
         return SETTINGS_PASSWORD_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_PASSWORD_URL)
-    public String updatePassword(@CurrentUser Account account, @Valid PasswordForm passwordForm, Errors errors,
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm, Errors errors,
                                  Model model, RedirectAttributes attributes){
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -86,14 +85,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_NOTIFICATIONS_URL)
-    public String updateNotificationFrom(@CurrentUser Account account, Model model) {
+    public String updateNotificationFrom(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Notifications.class));
         return SETTINGS_NOTIFICATIONS_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_NOTIFICATIONS_URL)
-    public String updateNotifications(@CurrentUser Account account, @Valid Notifications notifications, Errors errors,
+    public String updateNotifications(@CurrentAccount Account account, @Valid Notifications notifications, Errors errors,
                                       Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()){
             model.addAttribute(account);
@@ -106,7 +105,7 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_ACCOUNT_URL)
-    public String updateAccountForm(@CurrentUser Account account, Model model) {
+    public String updateAccountForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
 //        model.addAttribute(modelMapper.map(account, Notifications.class)); //유미온은 닉네임 변경 필요 없
         //TODO 계정 삭제 추가

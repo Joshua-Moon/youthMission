@@ -3,30 +3,30 @@
 <head th:replace="fragments.html :: head"></head>
 <body>
 <nav th:replace="fragments.html :: main-nav"></nav>
-<div th:replace="fragments.html :: study-banner"></div>
+<div th:replace="fragments.html :: school-banner"></div>
 <div class="container">
-    <div th:replace="fragments.html :: study-info"></div>
-    <div th:replace="fragments.html :: study-menu(studyMenu='settings')"></div>
+    <div th:replace="fragments.html :: school-info"></div>
+    <div th:replace="fragments.html :: school-menu(schoolMenu='settings')"></div>
     <div class="row mt-3 justify-content-center">
         <div class="col-2">
-            <div th:replace="fragments.html :: study-settings-menu(currentMenu='image')"></div>
+            <div th:replace="fragments.html :: school-settings-menu(currentMenu='image')"></div>
         </div>
             <div class="col-8">
                 <div th:replace="fragments.html :: message"></div>
                 <div class="row">
                     <h2 class="col-sm-12">배너 이미지 사용</h2>
                 </div>
-                <form th:if="${!study.useBanner}" action="#" th:action="@{'/study/' + ${study.getPath()} + '/settings/banner/enable'}" method="post" novalidate>
+                <form th:if="${!school.useBanner}" action="#" th:action="@{'/school/' + ${school.getPath()} + '/settings/banner/enable'}" method="post" novalidate>
                     <div class="alert alert-primary" role="alert">
-                        스터디 메뉴에서 스터디 배너 이미지를 사용합니다. 스터디 배너 이미지를 아직 설정하지 않았다면, 기본 배너 이미지를 사용합니다.
+                        교회학교 메뉴에서 교회학교 배너 이미지를 사용합니다. 교회학교 배너 이미지를 아직 설정하지 않았다면, 기본 배너 이미지를 사용합니다.
                     </div>
                     <div class="form-group">
                         <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">배너 이미지 사용하기</button>
                     </div>
                 </form>
-                <form th:if="${study.useBanner}" action="#" th:action="@{'/study/' + ${study.getPath()} + '/settings/banner/disable'}" method="post" novalidate>
+                <form th:if="${school.useBanner}" action="#" th:action="@{'/school/' + ${school.getPath()} + '/settings/banner/disable'}" method="post" novalidate>
                     <div class="alert alert-info" role="alert">
-                        스터디 메뉴에서 스터디 배너 이미지를 사용하지 않습니다. 스터디 목록에서는 배너 이미지를 사용합니다.
+                        교회학교 메뉴에서 교회학교 배너 이미지를 사용하지 않습니다. 교회학교 목록에서는 배너 이미지를 사용합니다.
                     </div>
                     <div class="form-group">
                         <button class="btn btn-outline-primary btn-block" type="submit" aria-describedby="submitHelp">배너 이미지 사용하지 않기</button>
@@ -36,28 +36,28 @@
                 <div class="row">
                     <h2 class="col-sm-12">배너 이미지 변경</h2>
                 </div>
-                <form id="imageForm" action="#" th:action="@{'/study/' + ${study.getPath()} + '/settings/banner'}" method="post" novalidate>
+                <form id="imageForm" action="#" th:action="@{'/school/' + ${school.getPath()} + '/settings/banner'}" method="post" novalidate>
                     <div class="form-group">
-                        <input id="studyImage" type="hidden" name="image" class="form-control" />
+                        <input id="schoolImage" type="hidden" name="image" class="form-control" />
                     </div>
                 </form>
                 <div class="card text-center">
-                    <div id="current-study-image" class="mt-3">
-                        <img class="rounded" th:src="${study.image}" width="640" alt="name" th:alt="${study.title}"/>
+                    <div id="current-school-image" class="mt-3">
+                        <img class="rounded" th:src="${school.image}" width="640" alt="name" th:alt="${school.title}"/>
                     </div>
-                    <div id="new-study-image" class="mt-3"></div>
+                    <div id="new-school-image" class="mt-3"></div>
                     <div class="card-body">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="study-image-file">
-                            <label class="custom-file-label" for="study-image-file">스터디 이미지 변경</label>
+                            <input type="file" class="custom-file-input" id="school-image-file">
+                            <label class="custom-file-label" for="school-image-file">교회학교 이미지 변경</label>
                         </div>
-                        <div id="new-study-image-control" class="mt-3">
+                        <div id="new-school-image-control" class="mt-3">
                             <button class="btn btn-outline-primary btn-block" id="cut-button">자르기</button>
                             <button class="btn btn-outline-success btn-block" id="confirm-button">확인</button>
                             <button class="btn btn-primary btn-block" id="save-button">저장</button>
                             <button class="btn btn-outline-warning btn-block" id="reset-button">취소</button>
                         </div>
-                        <div id="cropped-new-study-image" class="mt-3"></div>
+                        <div id="cropped-new-school-image" class="mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -75,18 +75,18 @@
             let $resetBtn = $("#reset-button");
             let $cutBtn = $("#cut-button");
             let $saveBtn = $("#save-button");
-            let $newStudyImage = $("#new-study-image");
-            let $currentStudyImage = $("#current-study-image");
-            let $resultImage = $("#cropped-new-study-image");
-            let $studyImage = $("#studyImage");
+            let $newSchoolImage = $("#new-school-image");
+            let $currentSchoolImage = $("#current-school-image");
+            let $resultImage = $("#cropped-new-school-image");
+            let $schoolImage = $("#schoolImage");
 
-            $newStudyImage.hide();
+            $newSchoolImage.hide();
             $cutBtn.hide();
             $resetBtn.hide();
             $confirmBtn.hide();
             $saveBtn.hide();
 
-            $("#study-image-file").change(function(e) {
+            $("#school-image-file").change(function(e) {
                 if (e.target.files.length === 1) {
                     const reader = new FileReader();
                     reader.onload = e => {
@@ -97,13 +97,13 @@
                             }
 
                             let img = document.createElement("img");
-                            img.id = 'new-study';
+                            img.id = 'new-school';
                             img.src = e.target.result;
                             img.setAttribute('width', '100%');
 
-                            $newStudyImage.html(img);
-                            $newStudyImage.show();
-                            $currentStudyImage.hide();
+                            $newSchoolImage.html(img);
+                            $newSchoolImage.show();
+                            $currentSchoolImage.hide();
 
                             let $newImage = $(img);
                             $newImage.cropper({aspectRatio: 13/2});
@@ -120,14 +120,14 @@
             });
 
             $resetBtn.click(function() {
-                $currentStudyImage.show();
-                $newStudyImage.hide();
+                $currentSchoolImage.show();
+                $newSchoolImage.hide();
                 $resultImage.hide();
                 $resetBtn.hide();
                 $cutBtn.hide();
                 $confirmBtn.hide();
                 $saveBtn.hide();
-                $studyImage.val('');
+                $schoolImage.val('');
             });
 
             $cutBtn.click(function () {
@@ -139,7 +139,7 @@
                 }
 
                 let newImage = document.createElement("img");
-                newImage.id = "cropped-new-study-image";
+                newImage.id = "cropped-new-school-image";
                 newImage.src = dataUrl;
                 newImage.width = 640;
                 $resultImage.html(newImage);
@@ -147,10 +147,10 @@
                 $confirmBtn.show();
 
                 $confirmBtn.click(function () {
-                    $newStudyImage.html(newImage);
+                    $newSchoolImage.html(newImage);
                     $cutBtn.hide();
                     $confirmBtn.hide();
-                    $studyImage.val(dataUrl);
+                    $schoolImage.val(dataUrl);
                     $saveBtn.show();
                 });
             });

@@ -90,8 +90,8 @@ class SettingsControllerTest {
         assertNull(joshua8565.getBio());
     }
 
-    @WithAccount("keesun")
-    @DisplayName("joshua8565@gmail.com")
+    @WithAccount("joshua8565@gmail.com")
+    @DisplayName("패스워드 수정 폼")
     @Test
     void updatePassword_form() throws Exception {
         mockMvc.perform(get(SettingsController.SETTINGS_PASSWORD_URL))

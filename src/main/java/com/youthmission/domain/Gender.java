@@ -1,6 +1,6 @@
 package com.youthmission.domain;
 
-public enum StudentType {
+public enum Gender {
 
-    NEW, GOOD, NORMAL, CARE, R;
+    MALE, FEMALE
 }

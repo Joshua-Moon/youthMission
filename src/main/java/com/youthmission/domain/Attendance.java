@@ -3,10 +3,7 @@ package com.youthmission.domain;
 import lombok.*;
 import org.springframework.format.annotation.NumberFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 
 @Entity
@@ -17,7 +14,7 @@ public class Attendance {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private Student student;
 
     private boolean isAttendant;

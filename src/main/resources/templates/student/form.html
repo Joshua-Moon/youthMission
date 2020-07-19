@@ -134,15 +134,16 @@
                 </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-3">
-                        <label for="teacher">담당 선생님</label>
-                        <input id="teacher" type="text" th:field="*{teacher}" class="form-control" placeholder="박은혜"
-                               aria-describedby="teacherHelp">
-                        <small id="teacherHelp" class="form-text text-muted">
-                            담당 선생님을 입력하세요.
+                    <div class="form-group col-md-5">
+                        <label for="teacherEmail">담당 선생님</label>
+                        <div id="whitelist" th:text="${whitelist}" hidden></div>
+                        <input id="teacherNameEmail" type="text" class="selectMode" placeholder="Please select">
+                        <input type="hidden" id="teacherEmail" th:field="*{teacherEmail}" name="teacherEmail" aria-describedby="teacherNameEmailHelp">
+                        <small id="teacherEmailHelp" class="form-text text-muted">
+                            담당 선생님을 선택하세요.
                         </small>
                         <small class="invalid-feedback">해당 교회학교 구성원만 입력할 수 있습니다.</small>
-                        <small class="form-text text-danger" th:if="${#fields.hasErrors('teacher')}" th:errors="*{teacher}">Error</small>
+                        <small class="form-text text-danger" th:if="${#fields.hasErrors('teacherEmail')}" th:errors="*{teacherEmail}">Error</small>
                     </div>
                 </div>
 <!--                <div class="form-group">-->
@@ -176,5 +177,77 @@
     
     <script th:replace="fragments.html :: form-validation"></script>
     <script th:replace="fragments.html :: editor-script"></script>
+    <script th:replace="fragments.html :: ajax-csrf-header"></script>
+    <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script type="application/javascript">
+
+        $(function() {
+            var csrfToken = /*[[${_csrf.token}]]*/ null;
+            var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            });
+        });
+
+            $(function() {
+                var schoolPath = "[(${school.path})]";
+                function tagRequest(url, teacherEmail) {
+                    $.ajax({
+                        dataType: "json",
+                        autocomplete: {
+                            enabled: true,
+                            rightKey: true,
+                        },
+                        contentType: "application/json; charset=utf-8",
+                        method: "POST",
+                        url: "/school/" + schoolPath + "//new-student/tags" + url,
+                        data: JSON.stringify({'teacherEmail': teacherEmail})
+                    }).done(function (data, status) {
+                        console.log("${data} and status is ${status}");
+                    });
+                }
+
+                var input = document.querySelector("#teacherNameEmail"),
+                    tagify = new Tagify(input, {
+                        mode : "select",
+                        whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                        blacklist: ['foo', 'bar'],
+                        keepInvalidTags: true,   // do not auto-remove invalid tags
+                        dropdown: {
+                            // closeOnSelect: false
+                        }
+                    });
+
+// bind events
+                tagify.on('add', onAddTag)
+                tagify.DOM.input.addEventListener('focus', onSelectFocus)
+
+                function onAddTag(e){
+                    console.log(e.detail)
+                }
+
+                function onSelectFocus(e){
+                    console.log(e)
+                }
+                // add a class to Tagify's input element
+                tagify.DOM.input.classList.add('form-control');
+                // re-place Tagify's input element outside of the  element (tagify.DOM.scope), just before it
+                tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+            });
+
+        $("#teacherNameEmail").on("propertychange change keyup paste input", function () {
+            var teacherNameEmailVar = $("#teacherNameEmail").val();
+            // alert(teacherNameEmailVar);
+            var start = teacherNameEmailVar.indexOf("(");
+            var end = teacherNameEmailVar.indexOf(")", start+1);
+            var teacherEmail = teacherNameEmailVar.substring(start+1, end);
+            // alert(teacherEmail);
+            $("#teacherEmail").val(teacherEmail);
+
+        })
+
+
+    </script>
 </body>
 </html>

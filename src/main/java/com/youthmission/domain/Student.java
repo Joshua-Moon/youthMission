@@ -5,13 +5,10 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
-@Builder @AllArgsConstructor @NoArgsConstructor
 public class Student {
 
     @Id
@@ -22,13 +19,16 @@ public class Student {
     private School school;
 
     @ManyToOne
-    private Account teacher;
-
-    @ManyToOne
     private Account createBy;
 
-    @OneToOne
-    private Attendance attendance;
+    @Column(nullable = false)
+    private LocalDateTime createdDateTime;
+
+    @ManyToOne
+    private Account teacher;
+
+    @OneToMany(mappedBy = "student" )
+    private List<Attendance> attendance = new ArrayList<>();
 
     @Column(nullable = false)
     private String studentName;
@@ -39,9 +39,6 @@ public class Student {
     private String phoneNumber;
 
     private LocalDateTime birthday;
-
-    @Column(nullable = false)
-    private LocalDateTime createdDateTime;
 
     private String nameOfSchool;
 

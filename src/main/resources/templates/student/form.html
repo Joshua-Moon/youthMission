@@ -159,7 +159,7 @@
                 <div class="form-group">
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <button class="btn btn-primary btn-block" type="submit"
+                            <button class="btn btn-primary btn-block" type="submit" onclick="test()"
                                     aria-describedby="submitHelp">학생 등록</button>
 <!--                            <input type="submit" value="학생 등록" onclick='javascript: form.action="@{'/school/' + ${school.path} + '/new-student'}";'/>-->
                         </div>
@@ -189,34 +189,34 @@
             });
         });
 
-            $(function() {
-                var schoolPath = "[(${school.path})]";
-                function tagRequest(url, teacherEmail) {
-                    $.ajax({
-                        dataType: "json",
-                        autocomplete: {
-                            enabled: true,
-                            rightKey: true,
-                        },
-                        contentType: "application/json; charset=utf-8",
-                        method: "POST",
-                        url: "/school/" + schoolPath + "//new-student/tags" + url,
-                        data: JSON.stringify({'teacherEmail': teacherEmail})
-                    }).done(function (data, status) {
-                        console.log("${data} and status is ${status}");
-                    });
-                }
+        $(function() {
+            var schoolPath = "[(${school.path})]";
+            function tagRequest(url, teacherEmail) {
+                $.ajax({
+                    dataType: "json",
+                    autocomplete: {
+                        enabled: true,
+                        rightKey: true,
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    method: "POST",
+                    url: "/school/" + schoolPath + "//new-student/tags" + url,
+                    data: JSON.stringify({'teacherEmail': teacherEmail})
+                }).done(function (data, status) {
+                    console.log("${data} and status is ${status}");
+                });
+            }
 
-                var input = document.querySelector("#teacherNameEmail"),
-                    tagify = new Tagify(input, {
-                        mode : "select",
-                        whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
-                        blacklist: ['foo', 'bar'],
-                        keepInvalidTags: true,   // do not auto-remove invalid tags
-                        dropdown: {
-                            // closeOnSelect: false
-                        }
-                    });
+            var input = document.querySelector("#teacherNameEmail"),
+                tagify = new Tagify(input, {
+                    mode : "select",
+                    whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                    blacklist: ['foo', 'bar'],
+                    keepInvalidTags: true,   // do not auto-remove invalid tags
+                    dropdown: {
+                        // closeOnSelect: false
+                    }
+                });
 
 // bind events
                 tagify.on('add', onAddTag)
@@ -244,9 +244,7 @@
             var teacherEmail = teacherNameEmailVar.substring(start+1, end);
             // alert(teacherEmail);
             $("#teacherEmail").val(teacherEmail);
-
         })
-
 
     </script>
 </body>

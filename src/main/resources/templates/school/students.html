@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body>
+    <nav th:replace="fragments.html :: main-nav"></nav>
+    <div th:replace="fragments.html :: school-banner"></div>
+    <div class="container">
+        <div th:replace="fragments.html :: school-info"></div>
+        <div th:replace="fragments.html :: school-menu(schoolMenu='students')"></div>
+        <div class="row my-3 mx-3 justify-content-center">
+            <div class="col-10 row row-cols-1 row-cols-md-2">
+                <div th:if="${students.size() == 0}" class="col">
+                    등록된 학생이 없습니다.
+                </div>
+            </div>
+            <div class="table-responsive-md">
+                <table th:if="${students.size() > 0}" class="table table-hover text-nowrap">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">이름</th>
+                            <th scope="col">성별</th>
+                            <th scope="col">생년월일</th>
+                            <th scope="col">연락처</th>
+                            <th scope="col">담당선생님</th>
+                            <th scope="col">학교/기타</th>
+                            <th scope="col">거주지역</th>
+                            <th scope="col">부모님</th>
+                            <th scope="col">부모님연락처</th>
+                            <th scope="col">출석상태</th>
+                        </tr>
+                    </thead>
+                    <tbody th:each="student: ${students}">
+                    <tr>
+                        <th scope="row" th:text="${studentStat.count}">1</th>
+
+                        <td>
+                            <a href="#" th:href="@{'/school/' + ${school.path} + '/students/' + ${student.id}}" class="card-link">
+                                <span th:text="${student.getStudentName()}">></span>
+                            </a>
+                        </td>
+                        <td>
+                            <span th:if="${student.getGender() == T(com.youthmission.domain.Gender).MALE}">M</span>
+                            <span th:if="${student.getGender() == T(com.youthmission.domain.Gender).FEMALE}">W</span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getBirthday()}">></span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getPhoneNumber()}">></span>
+                        </td>
+                        <td>
+                            <span th:if="${student.getTeacher() != null}" th:text="${student.getTeacher().getName()}"></span>
+                            <span th:if="${student.getTeacher() == null}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getNameOfSchool()}">></span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getResidence()}">></span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getParents()}">></span>
+                        </td>
+                        <td>
+                            <span th:text="${student.getPhoneNumberOfParents()}">></span>
+                        </td>
+                        <td>
+                            <!--<span th:text="${student.getAttendance()}">></span>--><!--TODO 출석률 grade 작업-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div th:replace="fragments.html :: footer"></div>
+    </div>
+    <script th:replace="fragments.html :: tooltip"></script>
+    <script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

@@ -21,7 +21,7 @@ public class Attendance {
 
     private boolean isOnTime;
 
-    private boolean afterSchool;
+    private boolean afterstudent;
 
     @Min(0)
     private Integer qt;

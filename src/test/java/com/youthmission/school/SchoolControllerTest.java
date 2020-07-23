@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
-class SchoolControllerTest {
+class studentrollerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired SchoolService schoolService;

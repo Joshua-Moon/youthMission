@@ -46,8 +46,20 @@ public class StudentController {
     @InitBinder("studentForm")
     public void initBinder(WebDataBinder webDataBinder) { webDataBinder.addValidators(studentValidator);}
 
+    @GetMapping("/students")
+    public String viewSchoolStudents(@CurrentAccount Account account, @PathVariable String path, Model model) {
+        School school = schoolService.getSchool(path);
+        model.addAttribute(account);
+        model.addAttribute(school);
+
+        List<Student> students = studentRepository.findBySchoolOrderByStudentName(school);
+        model.addAttribute("students", students);
+
+        return "school/students";
+    }
+
     @GetMapping("/new-student")
-    public String newEventForm(@CurrentAccount Account account, @PathVariable String path, Model model)
+    public String newStudentForm(@CurrentAccount Account account, @PathVariable String path, Model model)
             throws JsonProcessingException {
         School school = schoolService.getSchoolToUpdateStatus(account, path);
         model.addAttribute(school);
@@ -74,49 +86,84 @@ public class StudentController {
             model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
             return "student/form";
     }
-
-        Account teacher = accountRepository.findByEmail(studentForm.getTeacherEmail());
+        String teacherEmail = studentService.getTeacherEmail(studentForm);
+        Account teacher = accountRepository.findByEmail(teacherEmail);
         studentForm.setTeacher(teacher);
-//        if (teacher == null) {
-//            throw new IllegalArgumentException(path + "에 해당하는 담당선생님이 없습니다.");
-//        }
 
         Student student = studentService.createStudent(modelMapper.map(studentForm, Student.class), school, account);
         return "redirect:/school/" + school.getEncodedPath() + "/students";
     }
 
-    @GetMapping("/student/{id}") //TODO 한 학생마다 세밀한 정보 보는 뷰
-    public String getStudent(@CurrentAccount Account account, @PathVariable String path, @PathVariable("id") Student student,
-                             Model model) {
-
+    @GetMapping("/student/{id}")
+    public String getStudent(@CurrentAccount Account account, @PathVariable String path,
+                             @PathVariable("id") Student student, Model model) {
+        School school = schoolService.getSchoolToUpdate(account, path);
+        model.addAttribute(school);
         model.addAttribute(account);
         model.addAttribute(student);
-        model.addAttribute(schoolService.getSchool(path));
 
-        return "students/" + student.getId();
+//        StudentForm studentForm = modelMapper.map(student, StudentForm.class);
+//        if (student.getTeacher() != null) {
+//            studentForm.setTeacherNameEmail(student.getTeacher().nameEmail());
+//        }
+//        model.addAttribute(studentForm);
+
+        return "student/view";
     }
 
-    @GetMapping("/students")
-    public String viewSchoolStudents(@CurrentAccount Account account, @PathVariable String path, Model model) {
-        School school = schoolService.getSchool(path);
-        model.addAttribute(account);
+    @GetMapping("/student/{id}/edit")
+    public String updateStudentForm(@CurrentAccount Account account, @PathVariable String path,
+                             @PathVariable("id") Student student, Model model) throws JsonProcessingException {
+        School school = schoolService.getSchoolToUpdate(account, path);
         model.addAttribute(school);
+        model.addAttribute(account);
+        model.addAttribute(student);
+//        model.addAttribute(modelMapper.map(student, StudentForm.class));
 
-        List<Student> students = studentRepository.findBySchoolOrderByStudentName(school);
-//        List<Student> newStudents = new ArrayList<>();
-////        List<Student> oldStudents = new ArrayList<>();
-////        students.forEach(e -> {
-////            if (e.getEndDateTime().isBefore(LocalDateTime.now())) {
-////                oldStudents.add(e);
-////            } else {
-////                newStudents.add(e);
-////            }
-////        });
-////
-////        model.addAttribute("newStudents", newStudents);
-////        model.addAttribute("oldStudents", oldStudents);
-        model.addAttribute("students", students);
+        List<String> allTags = accountRepository.findAll().stream().map(Account::nameEmail).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
 
-        return "school/students";
+        StudentForm studentForm = modelMapper.map(student, StudentForm.class);
+        if (student.getTeacher() != null) {
+            studentForm.setTeacherNameEmail(student.getTeacher().nameEmail());
+        }
+        model.addAttribute(studentForm);
+
+        return "student/update-form";
     }
+
+    @PostMapping("/student/{id}/edit")
+    public String updateStudentSubmit(@CurrentAccount Account account, @PathVariable String path,
+                                      @PathVariable("id") Student student, @Valid StudentForm studentForm, Errors errors,
+                                      Model model) throws JsonProcessingException {
+        School school = schoolService.getSchoolToUpdateStatus(account, path);
+
+        if (errors.hasErrors()) {
+            model.addAttribute(account);
+            model.addAttribute(school);
+            List<String> allTags = accountRepository.findAll().stream().map(Account::nameEmail).collect(Collectors.toList());
+            model.addAttribute("whitelist", objectMapper.writeValueAsString(allTags));
+            model.addAttribute(student);
+
+            return "student/update-form";
+        }
+
+        String teacherEmail = studentService.getTeacherEmail(studentForm);
+        Account teacher = accountRepository.findByEmail(teacherEmail);
+        studentForm.setTeacher(teacher);
+
+        studentService.updateStudent(student, studentForm);
+        return "redirect:/school/" + school.getEncodedPath() + "/students";
+    }
+
+    @PostMapping("/student/{id}/delete")
+    public String cancelEvent(@CurrentAccount Account account, @PathVariable String path, @PathVariable("id") Student student) {
+        School school = schoolService.getSchoolToUpdateStatus(account, path);
+        studentService.deleteEvent(student);
+        return "redirect:/school/" + school.getEncodedPath() + "/students";
+    }
+
+
+
+
 }

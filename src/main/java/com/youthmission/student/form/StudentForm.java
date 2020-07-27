@@ -17,6 +17,7 @@ import java.util.Date;
 @Data
 public class StudentForm {
 
+    private String teacherNameEmail;
     private String teacherEmail;
     private Account teacher;
 
@@ -41,7 +42,7 @@ public class StudentForm {
     private String parents;
 
     @Length(min = 0, max = 11)
-    @Pattern(regexp = "^(?:[0-9]|)$", message = "숫자만 입력 가능합니다.")
+//    @Pattern(regexp = "^[0-9]+$", message = "숫자만 입력 가능합니다.")
     private String phoneNumberOfParents;
 
     private String studentImage;

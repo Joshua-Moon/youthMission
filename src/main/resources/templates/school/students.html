@@ -20,22 +20,23 @@
                             <th scope="col">#</th>
                             <th scope="col">이름</th>
                             <th scope="col">성별</th>
+                            <th scope="col">담당선생님</th>
                             <th scope="col">생년월일</th>
                             <th scope="col">연락처</th>
-                            <th scope="col">담당선생님</th>
                             <th scope="col">학교/기타</th>
                             <th scope="col">거주지역</th>
                             <th scope="col">부모님</th>
                             <th scope="col">부모님연락처</th>
                             <th scope="col">출석상태</th>
                         </tr>
+
                     </thead>
                     <tbody th:each="student: ${students}">
                     <tr>
                         <th scope="row" th:text="${studentStat.count}">1</th>
 
                         <td>
-                            <a href="#" th:href="@{'/school/' + ${school.path} + '/students/' + ${student.id}}" class="card-link">
+                            <a href="#" th:href="@{'/school/' + ${school.path} + '/student/' + ${student.id}}" class="card-link">
                                 <span th:text="${student.getStudentName()}">></span>
                             </a>
                         </td>
@@ -44,14 +45,14 @@
                             <span th:if="${student.getGender() == T(com.youthmission.domain.Gender).FEMALE}">W</span>
                         </td>
                         <td>
-                            <span th:text="${student.getBirthday()}">></span>
+                            <span th:if="${student.getTeacher() != null}" th:text="${student.getTeacher().getName()}"></span>
+                            <span th:if="${student.getTeacher() == null}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${student.getBirthday() != null}" th:text="${student.getBirthday()}" class="date">></span>
                         </td>
                         <td>
                             <span th:text="${student.getPhoneNumber()}">></span>
-                        </td>
-                        <td>
-                            <span th:if="${student.getTeacher() != null}" th:text="${student.getTeacher().getName()}"></span>
-                            <span th:if="${student.getTeacher() == null}"></span>
                         </td>
                         <td>
                             <span th:text="${student.getNameOfSchool()}">></span>

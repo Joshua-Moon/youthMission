@@ -193,7 +193,7 @@
             <span sec:authorize="isAuthenticated()"
                   th:if="${school.published && !school.closed && school.isManager(#authentication.principal)}">
                     <a class="btn btn-outline-primary" th:href="@{'/school/' + ${school.path} + '/new-student'}">
-                        <i class="fa fa-plus"></i> 학생 등록하기 <!--TODO 해당 버튼 위치 학생목록으로 이동-->
+                        <i class="fa fa-plus"></i> 학생 등록하기
                     </a>
                 </span>
         </div>
@@ -302,51 +302,6 @@
     })
 </script>
 
-<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
-<script type="application/javascript" th:inline="javascript">
-    $(function() {
-        var schoolPath = "[(${school.path})]";
-        function tagRequest(url, teacherEmail) {
-            $.ajax({
-                dataType: "json",
-                autocomplete: {
-                    enabled: true,
-                    rightKey: true,
-                },
-                contentType: "application/json; charset=utf-8",
-                method: "POST",
-                url: "/school/" + schoolPath + "//new-student/tags" + url,
-                data: JSON.stringify({'teacherEmail': teacherEmail})
-            }).done(function (data, status) {
-                console.log("${data} and status is ${status}");
-            });
-        }
-
-        var input = document.querySelector('input[name=tags-select-mode]'),
-            tagify = new Tagify(input, {
-                mode : "select",
-                whitelist: ["first option", "second option", "third option"],
-                blacklist: ['foo', 'bar'],
-                keepInvalidTags: true,   // do not auto-remove invalid tags
-                dropdown: {
-                    // closeOnSelect: false
-                }
-            })
-
-// bind events
-        tagify.on('add', onAddTag)
-        tagify.DOM.input.addEventListener('focus', onSelectFocus)
-
-        function onAddTag(e){
-            console.log(e.detail)
-        }
-
-        function onSelectFocus(e){
-            console.log(e)
-        }
-    });
-</script>
-
 <div th:fragment="date-time">
     <script src="/node_modules/moment/min/moment-with-locales.min.js"></script>
     <script type="application/javascript">
@@ -376,5 +331,264 @@
         })
     </script>
 </div>
+
+
+
+<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+<script type="application/javascript" th:inline="javascript">
+    $(function() {
+        var schoolPath = "[(${school.path})]";
+        function tagRequest(url, teacherEmail) {
+            $.ajax({
+                dataType: "json",
+                autocomplete: {
+                    enabled: true,
+                    rightKey: true,
+                },
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "/school/" + schoolPath + "//new-student/tags" + url,
+                data: JSON.stringify({'teacherEmail': teacherEmail})
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            });
+        }
+
+        var input = document.querySelector("#teacherNameEmail"),
+            tagify = new Tagify(input, {
+                mode : "select",
+                whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                blacklist: ['foo', 'bar'],
+                keepInvalidTags: true,   // do not auto-remove invalid tags
+                dropdown: {
+                    // closeOnSelect: false
+                }
+            });
+
+// bind events
+        tagify.on('add', onAddTag)
+        tagify.DOM.input.addEventListener('focus', onSelectFocus)
+
+        function onAddTag(e){
+            console.log(e.detail)
+        }
+
+        function onSelectFocus(e){
+            console.log(e)
+        }
+        // add a class to Tagify's input element
+        tagify.DOM.input.classList.add('form-control');
+        // re-place Tagify's input element outside of the  element (tagify.DOM.scope), just before it
+        tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+    });
+
+    $("#teacherNameEmail").on("propertychange change keyup paste input", function () {
+        var teacherNameEmailVar = $("#teacherNameEmail").val();
+        // alert(teacherNameEmailVar);
+        var start = teacherNameEmailVar.indexOf("(");
+        var end = teacherNameEmailVar.indexOf(")", start+1);
+        var teacherEmail = teacherNameEmailVar.substring(start+1, end);
+        // alert(teacherEmail);
+        $("#teacherEmail").val(teacherEmail);
+    })
+
+</script>
+<div th:fragment="student-form (mode, action)">
+    <div class="py-5 text-center">
+        <h2>
+            <a th:href="@{'/school/' + ${school.path}}"><span th:text="${school.title}">교회학교</span></a> /
+            <span th:if="${mode == 'edit'}" th:text="${student.studentName}">새 학생 만들기</span>
+            <span th:if="${mode == 'new'}">새 학생 만들기</span>
+        </h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <form class="needs-validation col-sm-10"
+              th:action="@{${action}}"
+              th:object="${studentForm}" method="post" novalidate>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="studentName">학생 이름</label>
+                    <input id="studentName" type="text" th:field="*{studentName}" class="form-control"
+                           placeholder="학생 이름" aria-describedby="studentNameHelp" required>
+                    <small id="studentNameHelp" class="form-text text-muted">
+                        학생 이름을 20자 이내로 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">학생 이름을 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}">Error</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="gender">성</label>
+                    <select th:field="*{gender}"  class="custom-select mr-sm-2" id="gender" aria-describedby="genderHelp">
+                        <option th:value="MALE">남자</option>
+                        <option th:value="FEMALE">여자</option>
+                    </select>
+                    <small id="genderHelp" class="form-text text-muted">
+                        성별을 선택하세요
+                    </small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="phoneNumber">연락처</label>
+                    <input id="phoneNumber" type="text" th:field="*{phoneNumber}" class="form-control" placeholder="01012341111"
+                           aria-describedby="phoneNumberHelp">
+                    <small id="phoneNumberHelp" class="form-text text-muted">
+                        연락처를 숫자만 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">연락처를 숫자만 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">Error</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="birthday">생년월일</label>
+                    <input id="birthday" type="datetime-local" th:field="*{birthday}" class="form-control"
+                           aria-describedby="birthdayHelp" required>
+                    <small id="birthdayHelp" class="form-text text-muted">
+                        생년월일을 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">생년월일을 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}">Error</small>
+                </div>
+            </div>
+
+
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="nameOfSchool">학교</label>
+                    <input id="nameOfSchool" type="text" th:field="*{nameOfSchool}" class="form-control" placeholder="은혜고등학교"
+                           aria-describedby="nameOfSchoolHelp">
+                    <small id="nameOfSchoolHelp" class="form-text text-muted">
+                        출석하는 학교를 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">출석하는 학교를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('nameOfSchool')}" th:errors="*{nameOfSchool}">Error</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="residence">거주</label>
+                    <input id="residence" type="text" th:field="*{residence}" class="form-control" placeholder="서울시 강남구 개포동"
+                           aria-describedby="residenceHelp">
+                    <small id="residenceHelp" class="form-text text-muted">
+                        거주지를 동(도로명)까지만 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">거주지를 동(도로명)까지만 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('residence')}" th:errors="*{residence}">Error</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="parents">부모님 성함</label>
+                    <input id="parents" type="text" th:field="*{parents}" class="form-control" placeholder="송미나"
+                           aria-describedby="parentsHelp">
+                    <small id="parentsHelp" class="form-text text-muted">
+                        부모님 성함을 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">부모님 성함을 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('parents')}" th:errors="*{parents}">Error</small>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="phoneNumberOfParents">부모님 연락처</label>
+                    <input id="phoneNumberOfParents" type="text" th:field="*{phoneNumberOfParents}" class="form-control" placeholder="01012341111"
+                           aria-describedby="phoneNumberOfParentsHelp">
+                    <small id="phoneNumberOfParentsHelp" class="form-text text-muted">
+                        부모님 연락처를 숫자만 입력하세요.
+                    </small>
+                    <small class="invalid-feedback">부모님 연락처를 숫자만 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('phoneNumberOfParents')}" th:errors="*{phoneNumberOfParents}">Error</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="teacherNameEmail">담당 선생님</label>
+                    <div id="whitelist" th:text="${whitelist}" hidden></div>
+                    <input th:if="*{teacher == null}"  id="teacherNameEmail" type="text" class="selectMode" placeholder="Please select"
+                           th:field="*{teacherNameEmail}" name="teacherNameEmail" aria-describedby="teacherNameEmailHelp" value ="">
+                    <input th:if="*{teacher != null}"  id="teacherNameEmail" type="text" class="selectMode" placeholder="Please select"
+                           th:field="*{teacherNameEmail}" name="teacherNameEmail" aria-describedby="teacherNameEmailHelp">
+                    <small id="teacherNameEmailHelp" class="form-text text-muted">
+                        담당 선생님을 선택하세요.
+                    </small>
+                    <small class="invalid-feedback">해당 교회학교 구성원만 입력할 수 있습니다.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('teacherNameEmail')}" th:errors="*{teacherNameEmail}">Error</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <button class="btn btn-primary btn-block" type="submit"
+                                aria-describedby="submitHelp" th:text="${mode == 'edit' ? '학생정보 수정' : '학생 등록'}">학생 등록</button>
+                        <!--                            <input type="submit" value="학생 등록" onclick='javascript: form.action="@{'/school/' + ${school.path} + '/new-student'}";'/>-->
+                    </div>
+                    <div class="form-group col-md-6" th:if="${mode == 'new'}">
+                        <button class="btn btn-success btn-block" type="submit"
+                                aria-describedby="submitHelp">학생 등록 후 추가 등록</button>
+                        <!--<input type="submit" value="학생 등록 후 추가 등록" onclick="javascript: form.action='/manage/delete';"/>-->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div th:fragment="update-student (baseUrl)">
+    <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script type="application/javascript" th:inline="javascript">
+        $(function() {
+            var schoolPath = "[(${school.path})]";
+            function tagRequest(url, teacherEmail) {
+                $.ajax({
+                    dataType: "json",
+                    autocomplete: {
+                        enabled: true,
+                        rightKey: true,
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    method: "POST",
+                    url: "/school/" + schoolPath + "//new-student/tags" + url,
+                    data: JSON.stringify({'teacherEmail': teacherEmail})
+                }).done(function (data, status) {
+                    console.log("${data} and status is ${status}");
+                });
+            }
+
+            var input = document.querySelector("#teacherNameEmail"),
+                tagify = new Tagify(input, {
+                    mode : "select",
+                    whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
+                    blacklist: ['foo', 'bar'],
+                    keepInvalidTags: true,   // do not auto-remove invalid tags
+                    dropdown: {
+                        // closeOnSelect: false
+                    }
+                });
+
+// bind events
+            tagify.on('add', onAddTag)
+            tagify.DOM.input.addEventListener('focus', onSelectFocus)
+
+            function onAddTag(e){
+                console.log(e.detail)
+            }
+
+            function onSelectFocus(e){
+                console.log(e)
+            }
+            // add a class to Tagify's input element
+            tagify.DOM.input.classList.add('form-control');
+            // re-place Tagify's input element outside of the  element (tagify.DOM.scope), just before it
+            tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
+
+        });
+
+        // $("#teacherNameEmail").on("propertychange change keyup paste input", function () {
+        //     var teacherNameEmailVar = $("#teacherNameEmail").val();
+        //     // alert(teacherNameEmailVar);
+        //     var start = teacherNameEmailVar.indexOf("(");
+        //     var end = teacherNameEmailVar.indexOf(")", start+1);
+        //     var teacherEmail = teacherNameEmailVar.substring(start+1, end);
+        //     // alert(teacherEmail);
+        //     $("#teacherEmail").val(teacherEmail);
+        // })
+
+    </script>
+</div>
+
 
 </html>

@@ -5,16 +5,44 @@
     <nav th:replace="fragments.html :: main-nav"></nav>
     <div th:replace="fragments.html :: school-banner"></div>
 
-    <div class="container">
-        <div class="form-row">
-            <div class="py-5 text-center">
+    <div class="container"> <!--TODO 레이아웃 수정-->
+        <div class="row pt-4 text-center justify-content-center bg-light">
+            <div class="col-6">
                 <h2><a th:href="@{'/school/' + ${school.path}}"><span th:text="${school.title}">교회학교</span></a> / 학생 정보</h2>
             </div>
-            <a class="btn btn-outline-primary" th:href="@{'/school/' + ${school.path} + '/student/' + ${student.id} + '/edit'}">
-                <i class="fa fa-plus"></i> 수 정
-            </a>
         </div>
-
+        <div class="row pt-4 text-center justify-content-end bg-light">
+            <div class="col-4 text-right justify-content-end">
+                <a class="btn btn-outline-primary btn-sm my-1" th:href="@{'/school/' + ${school.path} + '/student/' + ${student.id} + '/edit'}">
+                    <i class="fa fa-plus"></i>학생 수정하기
+                </a>
+                <a class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#delete">
+                    <i class="fa fa-plus"></i>학생 삭제하기
+                </a>
+                <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="deleteTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-center" id="cancelTitle" th:text="${student.studentName}"></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong th:text="${student.studentName}"></strong> 학생 정보를 삭제 하시겠습니까?</p>
+                                <p><strong>확인</strong>하시면 해당 학생 관련 데이터를 삭제합니다.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                                <form th:action="@{'/school/' + ${school.path} + '/student/' + ${student.id} + '/delete'}" th:method="post">
+                                    <button class="btn btn-primary" type="submit" aria-describedby="submitHelp">확인</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-center col-sm-10" th:object="${student}">
             <div class="form-row">
                 <div class="form-group col-md-3">
@@ -52,7 +80,7 @@
                     <input id="phoneNumberOfParents" type="text" th:value="*{phoneNumberOfParents}" class="form-control" readonly>
                 </div>
             </div>
-            <div class="form-row">
+            <div class="row justify-content-left col-sm-12">
                 <div class="form-group col-md-5">
                     <label for="teacherNameEmail">담당 선생님</label>
                     <input th:if="*{teacher == null}"  id="teacherNameEmail" type="text" value="" class="form-control" readonly>

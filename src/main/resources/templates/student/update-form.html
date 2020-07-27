@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<nav th:replace="fragments.html :: main-nav"></nav>
+<div th:replace="fragments.html :: school-banner"></div>
+
+<div class="container">
+    <div th:replace="fragments.html :: student-form (mode='edit', action='/school/'
+            + ${school.path} + '/student/' + ${student.id} + '/edit')"></div>
+    <div th:replace="fragments.html :: footer"></div>
+</div>
+
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script th:replace="fragments.html :: form-validation"></script>
+<script th:replace="fragments.html :: editor-script"></script>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script th:replace="fragments.html :: update-student(baseUrl='/school/' + ${school.path} + '/new-student')"></script>
+</body>
+</html>

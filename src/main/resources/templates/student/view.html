@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+    <nav th:replace="fragments.html :: main-nav"></nav>
+    <div th:replace="fragments.html :: school-banner"></div>
+
+    <div class="container">
+        <div class="form-row">
+            <div class="py-5 text-center">
+                <h2><a th:href="@{'/school/' + ${school.path}}"><span th:text="${school.title}">교회학교</span></a> / 학생 정보</h2>
+            </div>
+            <a class="btn btn-outline-primary" th:href="@{'/school/' + ${school.path} + '/student/' + ${student.id} + '/edit'}">
+                <i class="fa fa-plus"></i> 수 정
+            </a>
+        </div>
+
+        <div class="row justify-content-center col-sm-10" th:object="${student}">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="studentName">학생 이름</label>
+                    <input id="studentName" type="text" th:value="*{studentName}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="gender">성</label>
+                    <input id="gender" type="text" th:value="*{gender}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="phoneNumber">연락처</label>
+                    <input id="phoneNumber" type="text" th:value="*{phoneNumber}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="birthday">생년월일</label>
+                    <input id="birthday" type="datetime-local" th:value="*{birthday}" class="form-control" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="nameOfSchool">학교</label>
+                    <input id="nameOfSchool" type="text" th:value="*{nameOfSchool}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="residence">거주</label>
+                    <input id="residence" type="text" th:value="*{residence}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="parents">부모님 성함</label>
+                    <input id="parents" type="text" th:value="*{parents}" class="form-control" readonly>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="phoneNumberOfParents">부모님 연락처</label>
+                    <input id="phoneNumberOfParents" type="text" th:value="*{phoneNumberOfParents}" class="form-control" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="teacherNameEmail">담당 선생님</label>
+                    <input th:if="*{teacher == null}"  id="teacherNameEmail" type="text" value="" class="form-control" readonly>
+                    <input th:if="*{teacher != null}"  id="teacherNameEmail" type="text" th:value="*{teacher.nameEmail()}" class="form-control" readonly>
+                </div>
+            </div>
+        </div>
+        <div th:replace="fragments.html :: footer"></div>
+    </div>
+    <script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

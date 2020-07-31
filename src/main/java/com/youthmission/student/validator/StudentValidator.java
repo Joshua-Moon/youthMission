@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -32,7 +33,7 @@ public class StudentValidator implements Validator {
     }
 
     private boolean isNotValidBirthday(StudentForm studentForm) {
-        return studentForm.getBirthday().isBefore(LocalDateTime.now());
+        return studentForm.getBirthday().isBefore(LocalDate.now());
     }
 
 }

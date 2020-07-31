@@ -5,6 +5,7 @@ import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
@@ -14,6 +15,8 @@ public class Attendance {
     @GeneratedValue
     private Long id;
 
+    private LocalDateTime sunday;
+
     @ManyToOne
     private Student student;
 
@@ -21,7 +24,7 @@ public class Attendance {
 
     private boolean isOnTime;
 
-    private boolean afterstudent;
+    private boolean afterSchool;
 
     @Min(0)
     private Integer qt;

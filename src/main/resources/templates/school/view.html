@@ -7,7 +7,15 @@
 <div class="container">
     <div th:replace="fragments.html :: school-info"></div>
     <div th:replace="fragments.html :: school-menu(schoolMenu='info')"></div>
-
+<!-- TODO 교회학교 홈화면 기능 추가 -
+    - [ ]  공지 게시판 with 더보기?
+    - [ ]  일요달력
+        - [ ]  현재 주에 포커싱
+        - [ ]  현재 달 기준 앞, 뒤 한달만 노출
+    - [ ]  각종 링크(ex: 구글독회의록)
+    - [ ]  다가올 행사
+    - [ ]  우리교회 or 교계 전체 뉴스 & 행사(ex : 힐송집회)
+    - [ ]  나의 반 가기 : 선생님 이름 목록 & 클릭 시 해당 반으로 이동-->
     <div class="row px-3 justify-content-center">
         <div class="col-10 pt-3" th:utext="${school.fullDescription}"></div>
     </div>

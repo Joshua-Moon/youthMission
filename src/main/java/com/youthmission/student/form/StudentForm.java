@@ -11,6 +11,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -32,8 +33,8 @@ public class StudentForm {
     @Pattern(regexp = "^(?:[0-9]{10,11}|)$", message = "숫자만 입력 가능합니다.")
     private String phoneNumber;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime birthday;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthday;
 
     private String nameOfSchool;
 

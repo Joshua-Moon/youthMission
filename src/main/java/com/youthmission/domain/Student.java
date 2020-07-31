@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,7 +28,7 @@ public class Student {
     @ManyToOne
     private Account teacher;
 
-    @OneToMany(mappedBy = "student" )
+    @OneToMany(mappedBy = "student" ) //TODO 양쪽 맵핑이 더 효과적일지 단뱡향이 더 효과적일지 판단하자
     private List<Attendance> attendance = new ArrayList<>();
 
     @Column(nullable = false)
@@ -38,7 +39,7 @@ public class Student {
 
     private String phoneNumber;
 
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
     private String nameOfSchool;
 
@@ -48,7 +49,7 @@ public class Student {
 
     private String phoneNumberOfParents;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) //TODO 그냥 출석률 퍼센트로 표시하는건 어떤가?
     private StudentType studentType;
 
     @Lob @Basic(fetch = FetchType.EAGER)

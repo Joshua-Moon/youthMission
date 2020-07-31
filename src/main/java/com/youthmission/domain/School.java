@@ -125,7 +125,7 @@ public class School {
             this.recruiting = true;
             this.recruitingUpdatedDateTime = LocalDateTime.now();
         } else {
-            throw new RuntimeException("인원 모집을 시작할 수 없습니다. 스터디를 공개하거나 한 시간 뒤 다시 시도하세요.");
+            throw new RuntimeException("인원 모집을 시작할 수 없습니다. 교회학교를 공개하거나 한 시간 뒤 다시 시도하세요.");
         }
     }
 
@@ -134,7 +134,7 @@ public class School {
             this.recruiting = false;
             this.recruitingUpdatedDateTime = LocalDateTime.now();
         } else {
-            throw new RuntimeException("인원 모집을 멈출 수 없습니다. 스터디를 공개하거나 한 시간 뒤 다시 시도하세요.");
+            throw new RuntimeException("인원 모집을 멈출 수 없습니다. 교회학교를 공개하거나 한 시간 뒤 다시 시도하세요.");
         }
     }
 
@@ -143,7 +143,7 @@ public class School {
     }
 
     public boolean isRemovable() {
-        return !this.published; // TODO 모임을 했던 스터디는 삭제할 수 없다.
+        return !this.published; // TODO 모임을 했던 교회학교는 삭제할 수 없다.
     }
 
     public void addMember(Account account) {
